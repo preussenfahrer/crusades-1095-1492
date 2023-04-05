@@ -8,6 +8,8 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         html, body, #map {
@@ -32,13 +34,17 @@
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
         <script src="js/leaflet-measure.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
         <script src="data/ne_50m_oceanne_50m_oceanshp_0.js"></script>
-        <script src="data/lakes_1.js"></script>
-        <script src="data/CrusadesDigiMapsNorepeats_2.js"></script>
+        <script src="data/land_1.js"></script>
+        <script src="data/lakes_2.js"></script>
+        <script src="data/CrusadesDigiMapsNorepeats_3.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        })
+        }).fitBounds([[14.053230371801424,-16.22651976664627],[56.7572506814293,83.09118349457779]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -56,9 +62,6 @@
         .className += ' fas fa-ruler';
         var bounds_group = new L.featureGroup([]);
         function setBounds() {
-            if (bounds_group.getLayers().length) {
-                map.fitBounds(bounds_group.getBounds());
-            }
         }
         function pop_ne_50m_oceanne_50m_oceanshp_0(feature, layer) {
             var popupContent = '<table>\
@@ -104,7 +107,51 @@
         });
         bounds_group.addLayer(layer_ne_50m_oceanne_50m_oceanshp_0);
         map.addLayer(layer_ne_50m_oceanne_50m_oceanshp_0);
-        function pop_lakes_1(feature, layer) {
+        function pop_land_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['scalerank'] !== null ? autolinker.link(feature.properties['scalerank'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['featurecla'] !== null ? autolinker.link(feature.properties['featurecla'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['min_zoom'] !== null ? autolinker.link(feature.properties['min_zoom'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_land_1_0() {
+            return {
+                pane: 'pane_land_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(249,245,243,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_land_1');
+        map.getPane('pane_land_1').style.zIndex = 401;
+        map.getPane('pane_land_1').style['mix-blend-mode'] = 'normal';
+        var layer_land_1 = new L.geoJson(json_land_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_land_1',
+            layerName: 'layer_land_1',
+            pane: 'pane_land_1',
+            onEachFeature: pop_land_1,
+            style: style_land_1_0,
+        });
+        bounds_group.addLayer(layer_land_1);
+        map.addLayer(layer_land_1);
+        function pop_lakes_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['featurecla'] !== null ? autolinker.link(feature.properties['featurecla'].toLocaleString()) : '') + '</td>\
@@ -233,9 +280,9 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_lakes_1_0() {
+        function style_lakes_2_0() {
             return {
-                pane: 'pane_lakes_1',
+                pane: 'pane_lakes_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -248,21 +295,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_lakes_1');
-        map.getPane('pane_lakes_1').style.zIndex = 401;
-        map.getPane('pane_lakes_1').style['mix-blend-mode'] = 'normal';
-        var layer_lakes_1 = new L.geoJson(json_lakes_1, {
+        map.createPane('pane_lakes_2');
+        map.getPane('pane_lakes_2').style.zIndex = 402;
+        map.getPane('pane_lakes_2').style['mix-blend-mode'] = 'normal';
+        var layer_lakes_2 = new L.geoJson(json_lakes_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_lakes_1',
-            layerName: 'layer_lakes_1',
-            pane: 'pane_lakes_1',
-            onEachFeature: pop_lakes_1,
-            style: style_lakes_1_0,
+            dataVar: 'json_lakes_2',
+            layerName: 'layer_lakes_2',
+            pane: 'pane_lakes_2',
+            onEachFeature: pop_lakes_2,
+            style: style_lakes_2_0,
         });
-        bounds_group.addLayer(layer_lakes_1);
-        map.addLayer(layer_lakes_1);
-        function pop_CrusadesDigiMapsNorepeats_2(feature, layer) {
+        bounds_group.addLayer(layer_lakes_2);
+        map.addLayer(layer_lakes_2);
+        function pop_CrusadesDigiMapsNorepeats_3(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">place</th>\
@@ -288,9 +335,9 @@
             layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_CrusadesDigiMapsNorepeats_2_0() {
+        function style_CrusadesDigiMapsNorepeats_3_0() {
             return {
-                pane: 'pane_CrusadesDigiMapsNorepeats_2',
+                pane: 'pane_CrusadesDigiMapsNorepeats_3',
                 radius: 4.8,
                 opacity: 1,
                 color: 'rgba(128,17,25,0.75)',
@@ -304,26 +351,26 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_CrusadesDigiMapsNorepeats_2');
-        map.getPane('pane_CrusadesDigiMapsNorepeats_2').style.zIndex = 402;
-        map.getPane('pane_CrusadesDigiMapsNorepeats_2').style['mix-blend-mode'] = 'normal';
-        var layer_CrusadesDigiMapsNorepeats_2 = new L.geoJson(json_CrusadesDigiMapsNorepeats_2, {
+        map.createPane('pane_CrusadesDigiMapsNorepeats_3');
+        map.getPane('pane_CrusadesDigiMapsNorepeats_3').style.zIndex = 403;
+        map.getPane('pane_CrusadesDigiMapsNorepeats_3').style['mix-blend-mode'] = 'normal';
+        var layer_CrusadesDigiMapsNorepeats_3 = new L.geoJson(json_CrusadesDigiMapsNorepeats_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CrusadesDigiMapsNorepeats_2',
-            layerName: 'layer_CrusadesDigiMapsNorepeats_2',
-            pane: 'pane_CrusadesDigiMapsNorepeats_2',
-            onEachFeature: pop_CrusadesDigiMapsNorepeats_2,
+            dataVar: 'json_CrusadesDigiMapsNorepeats_3',
+            layerName: 'layer_CrusadesDigiMapsNorepeats_3',
+            pane: 'pane_CrusadesDigiMapsNorepeats_3',
+            onEachFeature: pop_CrusadesDigiMapsNorepeats_3,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_CrusadesDigiMapsNorepeats_2_0(feature));
+                return L.circleMarker(latlng, style_CrusadesDigiMapsNorepeats_3_0(feature));
             },
         });
-        bounds_group.addLayer(layer_CrusadesDigiMapsNorepeats_2);
-        map.addLayer(layer_CrusadesDigiMapsNorepeats_2);
+        bounds_group.addLayer(layer_CrusadesDigiMapsNorepeats_3);
+        map.addLayer(layer_CrusadesDigiMapsNorepeats_3);
             var title = new L.Control();
             title.onAdd = function (map) {
                 this._div = L.DomUtil.create('div', 'info');
@@ -334,7 +381,7 @@
                 this._div.innerHTML = '<h2>The Crusades - 1095 - 1492</h2>';
             };
             title.addTo(map);
-            var abstract = new L.Control({'position':'bottomleft'});
+            var abstract = new L.Control({'position':'topleft'});
             abstract.onAdd = function (map) {
                 this._div = L.DomUtil.create('div',
                 'leaflet-control abstract');
@@ -355,31 +402,202 @@
                     this._div.innerHTML = 'This is an attempt to recreate the ArGIS "Storymaps" feature using QGIS, an Open Source GIS (Geographic Information Systems) software. It features a list of places linked to the movement of the crusades in the Middle Ages, a phenomenon that combined armed warfare with Christian belief and mission, approved with support of the Pope in Rome. Places and place information were collected from a variety of sources: Peter of Dusburg\'s "Chronicle of Prussia" (c. 1326), Henry of Livonia\'s "Chronicle of Livonia" (c. 1227), in addition to the "History of the Jerusalemites" of Fulcher of Chartres (c. 1100). Also consulted were scholarly works on the Barbary crusade to Tunisia (1390) and the so-called "Reconquista" in Spain. Geographic information was harvested from Google Earth. Hovering on a point will provide the user with the following: 1.) place name; 2.) date; 3.) Lat and Lon points(here N and E); and 4.) Some information about what happened at each place. ';
             };
             abstract.addTo(map);
-        var baseMaps = {};
-        L.control.layers(baseMaps,{'<img src="legend/CrusadesDigiMapsNorepeats_2.png" /> Crusades-DigiMaps No repeats': layer_CrusadesDigiMapsNorepeats_2,'<img src="legend/lakes_1.png" /> lakes': layer_lakes_1,'<img src="legend/ne_50m_oceanne_50m_oceanshp_0.png" /> ne_50m_ocean — ne_50m_ocean.shp': layer_ne_50m_oceanne_50m_oceanshp_0,}).addTo(map);
         setBounds();
-        var i = 0;
-        layer_CrusadesDigiMapsNorepeats_2.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"Date": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Date = document.createElement('div');
+            div_Date.id = "div_Date";
+            div_Date.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Date);
+            sel_Date = document.createElement('select');
+            sel_Date.multiple = true;
+            sel_Date.size = 10;
+            sel_Date.id = "sel_Date";
+            var Date_options_str = "<option value='' unselected></option>";
+            sel_Date.onchange = function(){filterFunc()};
+            Date_options_str  += '<option value="1147">1147</option>';
+            Date_options_str  += '<option value="1168">1168</option>';
+            Date_options_str  += '<option value="1230">1230</option>';
+            Date_options_str  += '<option value="1231">1231</option>';
+            Date_options_str  += '<option value="1232">1232</option>';
+            Date_options_str  += '<option value="1233">1233</option>';
+            Date_options_str  += '<option value="1234">1234</option>';
+            Date_options_str  += '<option value="1239">1239</option>';
+            Date_options_str  += '<option value="1242">1242</option>';
+            Date_options_str  += '<option value="1246">1246</option>';
+            Date_options_str  += '<option value="1247">1247</option>';
+            Date_options_str  += '<option value="1255">1255</option>';
+            Date_options_str  += '<option value="1263">1263</option>';
+            Date_options_str  += '<option value="1266">1266</option>';
+            Date_options_str  += '<option value="1270">1270</option>';
+            Date_options_str  += '<option value="1283">1283</option>';
+            Date_options_str  += '<option value="1288">1288</option>';
+            Date_options_str  += '<option value="1290">1290</option>';
+            Date_options_str  += '<option value="1291">1291</option>';
+            Date_options_str  += '<option value="1298">1298</option>';
+            Date_options_str  += '<option value="1342">1342</option>';
+            Date_options_str  += '<option value="1390">1390</option>';
+            Date_options_str  += '<option value="August 21, 1415">August 21, 1415</option>';
+            Date_options_str  += '<option value="December 31, 1253">December 31, 1253</option>';
+            Date_options_str  += '<option value="December 31, 1259">December 31, 1259</option>';
+            Date_options_str  += '<option value="December 31, 1285">December 31, 1285</option>';
+            Date_options_str  += '<option value="Febraury 17, 1211">Febraury 17, 1211</option>';
+            Date_options_str  += '<option value="February 17, 1370">February 17, 1370</option>';
+            Date_options_str  += '<option value="February 2, 1348">February 2, 1348</option>';
+            Date_options_str  += '<option value="February 3, 1227">February 3, 1227</option>';
+            Date_options_str  += '<option value="January 2, 1492">January 2, 1492</option>';
+            Date_options_str  += '<option value="July 1, 1097">July 1, 1097</option>';
+            Date_options_str  += '<option value="July 1, 1147">July 1, 1147</option>';
+            Date_options_str  += '<option value="July 1, 1390">July 1, 1390</option>';
+            Date_options_str  += '<option value="July 13, 1260">July 13, 1260</option>';
+            Date_options_str  += '<option value="July 15, 1099">July 15, 1099</option>';
+            Date_options_str  += '<option value="July 15, 1410">July 15, 1410</option>';
+            Date_options_str  += '<option value="July 24, 1198">July 24, 1198</option>';
+            Date_options_str  += '<option value="June 1, 1200">June 1, 1200</option>';
+            Date_options_str  += '<option value="March 1, 1199">March 1, 1199</option>';
+            Date_options_str  += '<option value="March 13, 1362">March 13, 1362</option>';
+            Date_options_str  += '<option value="May 14, 1097">May 14, 1097</option>';
+            Date_options_str  += '<option value="November 27, 1095">November 27, 1095</option>';
+            Date_options_str  += '<option value="November 29, 1249">November 29, 1249</option>';
+            Date_options_str  += '<option value="October 20, 1097 ">October 20, 1097 </option>';
+            Date_options_str  += '<option value="September 1, 1096">September 1, 1096</option>';
+            Date_options_str  += '<option value="September 11, 1390">September 11, 1390</option>';
+            Date_options_str  += '<option value="September 23, 1236">September 23, 1236</option>';
+            sel_Date.innerHTML = Date_options_str;
+            div_Date.appendChild(sel_Date);
+            var lab_Date = document.createElement('div');
+            lab_Date.innerHTML = 'Date';
+            lab_Date.className = 'filterlabel';
+            div_Date.appendChild(lab_Date);
+            var reset_Date = document.createElement('div');
+            reset_Date.innerHTML = 'clear filter';
+            reset_Date.className = 'filterlabel';
+            reset_Date.onclick = function() {
+                var options = document.getElementById("sel_Date").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
             };
-            layer.bindTooltip((layer.feature.properties['place'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Arial\', sans-serif;">' + layer.feature.properties['place']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_CrusadesDigiMapsNorepeats_2'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_CrusadesDigiMapsNorepeats_2]);
+            div_Date.appendChild(reset_Date);
+        resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_land_1,layer_CrusadesDigiMapsNorepeats_3]);
         map.on("zoomend", function(){
-            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_CrusadesDigiMapsNorepeats_2]);
+            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_land_1,layer_CrusadesDigiMapsNorepeats_3]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_CrusadesDigiMapsNorepeats_2]);
+            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_land_1,layer_CrusadesDigiMapsNorepeats_3]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_CrusadesDigiMapsNorepeats_2]);
+            resetLabels([layer_ne_50m_oceanne_50m_oceanshp_0,layer_land_1,layer_CrusadesDigiMapsNorepeats_3]);
         });
         </script>
     </body>
